@@ -114,6 +114,25 @@ function configurarNavegacionYFiltros() {
   const searchInput = document.getElementById('searchInput');
   const categoryButtons = document.querySelectorAll('.category-card');
 
+  const mainHeader = document.querySelector('.main-header');
+  const btnToggleSearch = document.getElementById('btnToggleSearch');
+  const btnCloseSearch = document.getElementById('btnCloseSearch');
+
+  if (btnToggleSearch && mainHeader && searchInput) {
+    btnToggleSearch.onclick = () => {
+      mainHeader.classList.add('search-expanded');
+      setTimeout(() => searchInput.focus(), 50);
+    };
+  }
+
+  if (btnCloseSearch && mainHeader && searchInput) {
+    btnCloseSearch.onclick = () => {
+      mainHeader.classList.remove('search-expanded');
+      searchInput.value = '';
+      renderizarProductos(productos);
+    };
+  }
+
   if (logoBtn) {
     logoBtn.style.cursor = 'pointer';
     logoBtn.onclick = () => {
