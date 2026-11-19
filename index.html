@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MenuDirect - Tu restaurante favorito a un clic</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+  <!-- Encabezado Principal -->
+  <header class="main-header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-text">Menu<span class="logo-highlight">Direct</span></span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Buscar platillos o sucursales (ej. Domino's, Pizza)...">
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-secondary" id="btnLogin">Iniciar sesión</button>
+        <div class="cart-icon-container" id="cartButton">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge" id="cartCount">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+    <!-- Filtro de Categorías -->
+    <section class="categories-section">
+      <h2>Categorías</h2>
+      <div class="categories-grid" id="categoriesContainer">
+        <button type="button" class="category-card active" data-category="todos">
+          <span class="cat-icon">🍽️</span>
+          <span class="cat-name">Todas</span>
+        </button>
+        <button type="button" class="category-card" data-category="pizzas">
+          <span class="cat-icon">🍕</span>
+          <span class="cat-name">Pizzas</span>
+        </button>
+        <button type="button" class="category-card" data-category="hamburguesas">
+          <span class="cat-icon">🍔</span>
+          <span class="cat-name">Hamburguesas</span>
+        </button>
+        <button type="button" class="category-card" data-category="tacos">
+          <span class="cat-icon">🌮</span>
+          <span class="cat-name">Tacos</span>
+        </button>
+        <button type="button" class="category-card" data-category="sushi">
+          <span class="cat-icon">🍣</span>
+          <span class="cat-name">Sushi</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Catálogo de Productos -->
+    <section class="products-section">
+      <h2>Productos</h2>
+      <div class="products-grid" id="productsContainer">
+        <!-- Se renderiza dinámicamente desde Neon PostgreSQL -->
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL: CARRITO Y CHECKOUT -->
+  <div class="cart-modal-overlay" id="cartModal">
+    <div class="cart-modal-container">
+      <div class="cart-modal-header">
+        <h2>Mi Pedido</h2>
+        <button type="button" class="btn-close-modal" id="btnCloseCart">&times;</button>
+      </div>
+
+      <div class="cart-modal-body" id="cartView">
+        <div class="cart-items-list" id="cartItemsContainer"></div>
+        <div class="cart-summary">
+          <div class="summary-row total-row">
+            <span>Total a pagar:</span>
+            <span id="cartTotal">$0.00</span>
+          </div>
+          <button type="button" class="btn-primary btn-block" id="btnGoToCheckout" disabled>Proceder al pago</button>
+        </div>
+      </div>
+
+      <div class="cart-modal-body hidden" id="checkoutView">
+        <button type="button" class="btn-back-link" id="btnBackToCart">← Volver al carrito</button>
+        <h3>Datos de Envío a Domicilio</h3>
+        
+        <form id="checkoutForm" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="inputNombre">Nombre completo *</label>
+            <input type="text" id="inputNombre" placeholder="Ej. Juan Pérez" required>
+          </div>
+
+          <div class="form-group">
+            <label for="inputTelefono">Teléfono de contacto *</label>
+            <input type="tel" id="inputTelefono" placeholder="Ej. 9931234567" required>
+          </div>
+
+          <div class="form-group">
+            <label for="inputDireccion">Dirección de entrega *</label>
+            <textarea id="inputDireccion" rows="2" placeholder="Calle, número, colonia..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="inputReferencias">Referencias (opcional)</label>
+            <input type="text" id="inputReferencias" placeholder="Ej. Casa color azul, frente al parque">
+          </div>
+
+          <h3>Método de Pago</h3>
+          <div class="payment-options">
+            <label class="payment-option">
+              <input type="radio" name="metodoPago" value="efectivo" checked id="payCash">
+              <span>Efectivo en entrega</span>
+            </label>
+            <label class="payment-option">
+              <input type="radio" name="metodoPago" value="tarjeta" id="payCard">
+              <span>Tarjeta en entrega</span>
+            </label>
+          </div>
+
+          <div class="cash-details" id="cashDetails">
+            <label for="inputMontoEfectivo">¿Con cuánto pagas? (para calcular tu cambio)</label>
+            <input type="number" id="inputMontoEfectivo" min="0" step="0.50" placeholder="Ej. 500">
+          </div>
+
+          <button type="submit" class="btn-primary btn-block" id="btnConfirmOrder">Confirmar y Enviar Pedido</button>
+        </form>
+      </div>
+
+      <div class="cart-modal-body hidden" id="successView">
+        <div class="success-message">
+          <span class="success-icon">✅</span>
+          <h3>¡Pedido Recibido con Éxito!</h3>
+          <p id="successOrderNum">Número de orden: #MD-0000</p>
+          <p class="success-text">La sucursal ha sido notificada y tu pedido pasará a la etapa de <strong>Recibido / En preparación</strong>.</p>
+          <button type="button" class="btn-secondary btn-block" id="btnCloseSuccess">Aceptar y volver al inicio</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTENTICACIÓN -->
+  <div class="cart-modal-overlay" id="loginModal">
+    <div class="cart-modal-container modal-small">
+      <div class="cart-modal-header">
+        <div class="auth-tabs-header">
+          <button type="button" class="auth-tab-btn active" id="tabBtnLogin">Iniciar Sesión</button>
+          <button type="button" class="auth-tab-btn" id="tabBtnRegister">Crear Cuenta</button>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseLogin">&times;</button>
+      </div>
+
+      <!-- Login -->
+      <div class="cart-modal-body" id="authLoginView">
+        <form id="loginForm" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="loginRole">Tipo de Usuario</label>
+            <select id="loginRole" class="form-control">
+              <option value="cliente">Cliente</option>
+              <option value="sucursal">Sucursal / Administrador</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="loginEmail">Correo electrónico</label>
+            <input type="email" id="loginEmail" placeholder="ejemplo@correo.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword">Contraseña</label>
+            <div class="password-input-wrap" style="position: relative;">
+              <input type="password" id="loginPassword" placeholder="••••••••" required style="width: 100%; padding-right: 40px;">
+              <button type="button" id="toggleLoginPassword" class="btn-toggle-pass" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem;">👁️</button>
+            </div>
+          </div>
+
+          <div class="forgot-pass-wrap">
+            <button type="button" class="btn-link-forgot" id="btnForgotPassword">¿Olvidaste tu contraseña?</button>
+          </div>
+
+          <button type="submit" class="btn-primary btn-block">Ingresar</button>
+        </form>
+      </div>
+
+      <!-- Registro -->
+      <div class="cart-modal-body hidden" id="authRegisterView">
+        <form id="registerForm" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="regRole">Tipo de Cuenta *</label>
+            <select id="regRole" class="form-control">
+              <option value="cliente">Cliente</option>
+              <option value="sucursal">Sucursal / Restaurante</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="regName" id="lblRegName">Nombre completo *</label>
+            <input type="text" id="regName" placeholder="Ej. Juan Pérez" required>
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail">Correo electrónico *</label>
+            <input type="email" id="regEmail" placeholder="ejemplo@correo.com" required>
+          </div>
+
+          <div class="branch-extra-fields hidden" id="branchExtraFields">
+            <div class="form-group">
+              <label for="regAddress">Dirección de la sucursal *</label>
+              <input type="text" id="regAddress" placeholder="Ej. Av. Paseo Tabasco #502">
+            </div>
+
+            <div class="form-group">
+              <label for="regPhone">Teléfono de contacto *</label>
+              <input type="tel" id="regPhone" placeholder="Ej. 9931234567">
+            </div>
+
+            <div class="form-group">
+              <label for="regChainType">Tipo de Establecimiento *</label>
+              <select id="regChainType" class="form-control">
+                <option value="local">Negocio Local / Independiente 🏪</option>
+                <option value="cadena">Cadena Nacional / Franquicia 🏢</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">Contraseña *</label>
+            <div class="password-input-wrap" style="position: relative;">
+              <input type="password" id="regPassword" placeholder="••••••••" required style="width: 100%; padding-right: 40px;">
+              <button type="button" id="toggleRegPassword" class="btn-toggle-pass" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem;">👁️</button>
+            </div>
+            <small class="pass-hint" id="passHint">
+              La contraseña requiere: mínimo 8 caracteres, al menos un número (0-9) y un carácter especial (!@#$%^&*).
+            </small>
+          </div>
+
+          <button type="submit" class="btn-primary btn-block" id="btnSubmitRegister">Registrarse</button>
+        </form>
+      </div>
+
+      <!-- Recuperar Contraseña -->
+      <div class="cart-modal-body hidden" id="authForgotView">
+        <button type="button" class="btn-back-link" id="btnBackToLoginFromForgot">← Volver al inicio de sesión</button>
+        <h3>Recuperar Contraseña</h3>
+
+        <!-- Paso 1: Solicitar código -->
+        <form id="forgotForm" onsubmit="event.preventDefault();">
+          <p class="forgot-desc">Ingresa tu correo registrado y te enviaremos un código de verificación de 6 dígitos.</p>
+          <div class="form-group">
+            <label for="forgotEmail">Correo electrónico</label>
+            <input type="email" id="forgotEmail" placeholder="ejemplo@correo.com" required>
+          </div>
+          <button type="submit" class="btn-primary btn-block" id="btnSendResetCode">Enviar código al correo</button>
+        </form>
+
+        <!-- Paso 2: Ingresar código y nueva contraseña -->
+        <form id="resetForm" class="hidden" onsubmit="event.preventDefault();" style="margin-top: 1rem;">
+          <p class="forgot-desc" style="color: var(--secondary-green); font-weight: 600;">
+            ✔ Código enviado. Revisa tu bandeja de entrada (o spam).
+          </p>
+          <div class="form-group">
+            <label for="resetCode">Código de 6 dígitos *</label>
+            <input type="text" id="resetCode" maxlength="6" placeholder="Ej. 482910" required style="letter-spacing: 4px; font-weight: bold; text-align: center;">
+          </div>
+          <div class="form-group">
+            <label for="resetNewPassword">Nueva contraseña *</label>
+            <input type="password" id="resetNewPassword" placeholder="Mín. 8 caracteres, 1 número y 1 símbolo" required>
+          </div>
+          <button type="submit" class="btn-primary btn-block">Actualizar Contraseña</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MI CUENTA -->
+  <div class="cart-modal-overlay" id="profileModal">
+    <div class="cart-modal-container modal-small">
+      <div class="cart-modal-header">
+        <h2>Mi Cuenta</h2>
+        <button type="button" class="btn-close-modal" id="btnCloseProfile">&times;</button>
+      </div>
+
+      <div class="cart-modal-body">
+        <form id="profileForm" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="profileName">Nombre completo</label>
+            <input type="text" id="profileName" required>
+          </div>
+
+          <div class="form-group">
+            <label for="profileEmail">Correo electrónico</label>
+            <input type="email" id="profileEmail" readonly style="background-color: #f0f0f0;">
+          </div>
+
+          <div class="form-group">
+            <label for="profileAddress">Dirección de entrega guardada</label>
+            <textarea id="profileAddress" rows="2" placeholder="Calle, número, colonia..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="profilePayment">Método de pago preferido</label>
+            <select id="profilePayment" class="form-control">
+              <option value="Efectivo">Efectivo en entrega</option>
+              <option value="Tarjeta">Tarjeta de crédito/débito en entrega</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary btn-block">Guardar Cambios</button>
+        </form>
+
+        <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border-color);">
+
+        <button type="button" class="btn-secondary btn-block" id="btnLogoutFromProfile" style="border-color: #c62828; color: #c62828;">
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AGREGAR / EDITAR PRODUCTO -->
+  <div class="cart-modal-overlay" id="productModal">
+    <div class="cart-modal-container modal-small">
+      <div class="cart-modal-header">
+        <h2 id="productModalTitle">Nuevo Producto</h2>
+        <button type="button" class="btn-close-modal" id="btnCloseProductModal">&times;</button>
+      </div>
+
+      <div class="cart-modal-body">
+        <form id="productForm" onsubmit="event.preventDefault();">
+          <input type="hidden" id="prodModalId" value="">
+
+          <div class="form-group">
+            <label for="prodModalName">Nombre del producto *</label>
+            <input type="text" id="prodModalName" placeholder="Ej. Pizza Mexicana Especial" required>
+          </div>
+
+          <div class="form-group">
+            <label for="prodModalPrice">Precio ($) *</label>
+            <input type="number" id="prodModalPrice" step="0.50" min="0" placeholder="Ej. 185.00" required>
+          </div>
+
+          <div class="form-group">
+            <label for="prodModalCategory">Categoría *</label>
+            <select id="prodModalCategory" class="form-control">
+              <option value="pizzas">Pizzas</option>
+              <option value="hamburguesas">Hamburguesas</option>
+              <option value="tacos">Tacos</option>
+              <option value="sushi">Sushi</option>
+              <option value="otro">Otro (Especificar)...</option>
+            </select>
+          </div>
+
+          <div class="form-group hidden" id="customCategoryGroup">
+            <label for="prodModalCustomCategory">Escribe el nombre de la categoría *</label>
+            <input type="text" id="prodModalCustomCategory" placeholder="Ej. Postres, Bebidas...">
+          </div>
+
+          <div class="form-group">
+            <label for="prodModalImageFile">Seleccionar Imagen (JPG, PNG)</label>
+            <input type="file" id="prodModalImageFile" accept="image/*" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="prodModalImageUrl">O pegar enlace de imagen (URL)</label>
+            <input type="url" id="prodModalImageUrl" placeholder="https://ejemplo.com/imagen.jpg">
+          </div>
+
+          <div class="modal-form-actions" style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <button type="button" class="btn-secondary" id="btnSkipImage" style="flex: 1;">Omitir Imagen</button>
+            <button type="submit" class="btn-primary" style="flex: 1;">Guardar Producto</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL DE ADMINISTRACIÓN DE SUCURSAL -->
+  <div class="admin-panel-overlay hidden" id="adminPanel">
+    <div class="admin-panel-container">
+      <header class="admin-header">
+        <div class="admin-header-title">
+          <h2>Panel de Administración de Sucursal</h2>
+          <span class="badge-branch-name" id="adminBranchName">Sucursal</span>
+        </div>
+        <button type="button" class="btn-secondary" id="btnExitAdmin">Cerrar Sesión / Volver a la Tienda</button>
+      </header>
+
+      <nav class="admin-nav-tabs">
+        <button type="button" class="tab-btn active" data-tab="orders">📦 Pedidos Entrantes</button>
+        <button type="button" class="tab-btn" data-tab="catalog">🍕 Gestión del Catálogo</button>
+      </nav>
+
+      <section class="admin-tab-content" id="tabOrders">
+        <div class="orders-board-grid" id="ordersBoardContainer"></div>
+      </section>
+
+      <section class="admin-tab-content hidden" id="tabCatalog">
+        <div class="catalog-actions-bar">
+          <h3>Productos de la Sucursal</h3>
+          <button type="button" class="btn-primary" id="btnNewProduct">+ Agregar Nuevo Producto</button>
+        </div>
+
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Imagen</th>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Reservas / Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductsTable"></tbody>
+        </table>
+      </section>
+    </div>
+  </div>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
