@@ -807,6 +807,9 @@ body {
   }
 
   .main-header.search-expanded .btn-search-close {
+    display: none;
+  }
+  .main-header.search-expanded .btn-search-close {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -814,5 +817,6 @@ body {
     height: 34px;
     font-size: 1.4rem;
     color: var(--text-muted);
+    flex-shrink: 0;
   }
 }
