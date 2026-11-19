@@ -19,8 +19,10 @@
       <div class="logo">
         <span class="logo-text">Menu<span class="logo-highlight">Direct</span></span>
       </div>
-      <div class="search-bar">
+      <div class="search-bar" id="searchBar">
+        <button type="button" class="btn-search-toggle" id="btnToggleSearch" aria-label="Buscar">🔍</button>
         <input type="text" id="searchInput" placeholder="Buscar platillos o sucursales (ej. Domino's, Pizza)...">
+        <button type="button" class="btn-search-close hidden" id="btnCloseSearch" aria-label="Cerrar búsqueda">&times;</button>
       </div>
       <div class="header-actions">
         <button type="button" class="btn-secondary" id="btnLogin">Iniciar sesión</button>
