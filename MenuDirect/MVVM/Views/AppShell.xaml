@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="MenuDirect.MVVM.Views.AppShell"
+       xmlns:views="clr-namespace:MenuDirect.MVVM.Views"
+       Shell.NavBarIsVisible="False"
+       Shell.TabBarBackgroundColor="White"
+       Shell.TabBarForegroundColor="CornflowerBlue"
+       Shell.TabBarTitleColor="CornflowerBlue">
+
+    <ShellContent Route="login"
+                  ContentTemplate="{DataTemplate views:LoginView}"
+                  Shell.FlyoutBehavior="Disabled"
+                  Shell.TabBarIsVisible="False"/>
+
+    <TabBar Route="mesero">
+        <ShellContent Title="Menú"
+                      Icon="inicio.png"
+                      ContentTemplate="{DataTemplate views:CatalogoView}"/>
+        <ShellContent x:Name="CarritoTab"
+                      Title="Carrito"
+                      Icon="cart.png"
+                      ContentTemplate="{DataTemplate views:CarritoView}"/>
+    </TabBar>
+
+    <ShellContent Route="cocina"
+                  ContentTemplate="{DataTemplate views:CocinaView}"
+                  Shell.TabBarIsVisible="False"/>
+
+    <ShellContent Route="admin"
+                  ContentTemplate="{DataTemplate views:AdminDashboardView}"
+                  Shell.TabBarIsVisible="False"/>
+
+</Shell>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MenuDirect.MVVM.Views.PedidoListView"
+             xmlns:model="clr-namespace:MenuDirect.MVVM.Models"
+             xmlns:vm="clr-namespace:MenuDirect.MVVM.ViewModel"
+             x:DataType="vm:PedidoListViewModel"
+             x:Name="PaginaPedidos"
+             BackgroundColor="#F2F4F7"
+             Title="Pedidos">
+
+    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="8">
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+            <Button Text="&#xF177;"
+                    FontFamily="Icons"
+                    FontSize="20"
+                    WidthRequest="42"
+                    HeightRequest="42"
+                    CornerRadius="21"
+                    BackgroundColor="CornflowerBlue"
+                    TextColor="White"
+                    Command="{Binding VolverCommand}"/>
+
+            <Label Grid.Column="1"
+                   Text="Pedidos"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="#0F172A"
+                   VerticalOptions="Center"/>
+        </Grid>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Pedidos}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Pedido">
+                    <Border Margin="0,5"
+                            BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12">
+                        <VerticalStackLayout Spacing="4">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Id, StringFormat='Pedido #{0}'}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A"/>
+                                <Label Grid.Column="1"
+                                       Text="{Binding NumeroMesa, StringFormat='Mesa {0}'}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="CornflowerBlue"/>
+                            </Grid>
+
+                            <Label Text="{Binding Estado, StringFormat='Estado: {0}'}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#475569"/>
+
+                            <Label Text="{Binding FechaHora, StringFormat='{0:dd/MM/yyyy HH:mm}'}"
+                                   FontSize="12"
+                                   TextColor="#64748B"/>
+
+                            <Label Text="{Binding Total, StringFormat='Total: ${0:F2}'}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="ForestGreen"/>
+
+                            <Grid Margin="0,6,0,0" ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Grid.Column="0"
+                                        Text="Ver detalle"
+                                        BackgroundColor="#E2E8F0"
+                                        TextColor="#0F172A"
+                                        CornerRadius="10"
+                                        HeightRequest="38"
+                                        Command="{Binding Source={x:Reference PaginaPedidos}, Path=BindingContext.VerDetalleCommand}"
+                                        CommandParameter="{Binding}"/>
+
+                                <Button Grid.Column="1"
+                                        Text="Modificar"
+                                        BackgroundColor="CornflowerBlue"
+                                        TextColor="White"
+                                        CornerRadius="10"
+                                        HeightRequest="38"
+                                        Command="{Binding Source={x:Reference PaginaPedidos}, Path=BindingContext.ModificarPedidoCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

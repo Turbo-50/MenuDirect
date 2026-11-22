@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MenuDirect.MVVM.Views.CarritoView"
+             xmlns:model="clr-namespace:MenuDirect.MVVM.Models"
+             xmlns:vm="clr-namespace:MenuDirect.MVVM.ViewModel"
+             x:DataType="vm:CarritoViewModel"
+             BackgroundColor="#F2F4F7"
+             Title="Carrito">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="10" RowSpacing="8">
+        <!-- Los 3 botones principales -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+            <Button Grid.Column="0"
+                    Text="{Binding TextoBotonOrdenar}"
+                    Command="{Binding OrdenarCommand}"
+                    BackgroundColor="ForestGreen"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    CornerRadius="12"
+                    HeightRequest="46"/>
+
+            <Button Grid.Column="1"
+                    Text="Pedidos"
+                    Command="{Binding PedidosCommand}"
+                    BackgroundColor="CornflowerBlue"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    CornerRadius="12"
+                    HeightRequest="46"/>
+
+            <Button Grid.Column="2"
+                    Text="Cancelar"
+                    Command="{Binding CancelarPedidoCommand}"
+                    BackgroundColor="Crimson"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    FontSize="14"
+                    CornerRadius="12"
+                    HeightRequest="46"/>
+        </Grid>
+
+        <!-- Total General -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                Stroke="#CBD5E1"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 12"
+                Padding="14,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Total General"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#1E293B"
+                       VerticalOptions="Center"/>
+                <Label Grid.Column="1"
+                       Text="{Binding TotalPedido, StringFormat='${0:F2}'}"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="ForestGreen"
+                       VerticalOptions="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Lista de productos: Nombre, Precio Unitario, Unidades y Subtotal -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding ProductosSeleccionados}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Producto">
+                    <Border Margin="0,4"
+                            BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12">
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*">
+                            <Label Grid.Row="0"
+                                   Grid.ColumnSpan="3"
+                                   Text="{Binding Nombre}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F172A"
+                                   Margin="0,0,0,6"/>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Text="{Binding PrecioUnitario, StringFormat='P.U.: ${0:F2}'}"
+                                   FontSize="13"
+                                   TextColor="#475569"/>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text="{Binding Cantidad, StringFormat='Unidades: {0}'}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"
+                                   TextColor="#1E293B"
+                                   HorizontalOptions="Center"/>
+
+                            <Label Grid.Row="1"
+                                   Grid.Column="2"
+                                   Text="{Binding Subtotal, StringFormat='Subtotal: ${0:F2}'}"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="ForestGreen"
+                                   HorizontalOptions="End"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

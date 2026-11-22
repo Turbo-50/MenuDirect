@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MenuDirect.MVVM.Views.CatalogoView"
+             xmlns:model="clr-namespace:MenuDirect.MVVM.Models"
+             xmlns:vm="clr-namespace:MenuDirect.MVVM.ViewModel"
+             x:DataType="vm:CatalogoViewModel"
+             x:Name="PaginaCatalogo"
+             BackgroundColor="#F2F4F7"
+             Title="Menú">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <!-- Barra superior -->
+        <Grid Grid.Row="0" Padding="12,10,12,4" ColumnDefinitions="*,Auto">
+            <Label Text="Catálogo"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="#1E293B"
+                   VerticalOptions="Center"/>
+            <Button Grid.Column="1"
+                    Text="Salir"
+                    Command="{Binding CerrarSesionCommand}"
+                    BackgroundColor="#E2E8F0"
+                    TextColor="#1E293B"
+                    CornerRadius="10"
+                    Padding="12,6"
+                    FontSize="13"/>
+        </Grid>
+
+        <!-- Categorías -->
+        <CollectionView Grid.Row="1"
+                        Margin="10,4"
+                        ItemsSource="{Binding Categorias}"
+                        SelectionMode="None"
+                        HeightRequest="48">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Categoria">
+                    <Button Text="{Binding Nombre}"
+                            FontAttributes="Bold"
+                            FontSize="13"
+                            Padding="14,8"
+                            CornerRadius="18"
+                            BackgroundColor="{Binding BackgroundColor}"
+                            TextColor="{Binding TextColor}"
+                            Command="{Binding Source={x:Reference PaginaCatalogo}, Path=BindingContext.SeleccionarCategoriaCommand}"
+                            CommandParameter="{Binding}"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Subcategorías -->
+        <CollectionView Grid.Row="2"
+                        Margin="10,2,10,6"
+                        ItemsSource="{Binding Subcategorias}"
+                        SelectionMode="None"
+                        HeightRequest="42">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="6"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Subcategoria">
+                    <Button Text="{Binding Nombre}"
+                            FontSize="12"
+                            Padding="12,6"
+                            CornerRadius="14"
+                            BackgroundColor="{Binding BackgroundColor}"
+                            TextColor="{Binding TextColor}"
+                            Command="{Binding Source={x:Reference PaginaCatalogo}, Path=BindingContext.SeleccionarSubcategoriaCommand}"
+                            CommandParameter="{Binding}"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Productos en 2 columnas para pantalla móvil vertical -->
+        <CollectionView Grid.Row="3"
+                        Margin="6,0,6,8"
+                        ItemsSource="{Binding Productos}"
+                        ItemsUpdatingScrollMode="KeepScrollOffset"
+                        SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Span="2"
+                                 Orientation="Vertical"
+                                 HorizontalItemSpacing="6"
+                                 VerticalItemSpacing="6"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Producto">
+                    <Border BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="0">
+                        <VerticalStackLayout Spacing="4">
+                            <Image Source="{Binding Imagen}"
+                                   HeightRequest="105"
+                                   Aspect="AspectFill"/>
+
+                            <VerticalStackLayout Padding="8" Spacing="4">
+                                <Label Text="{Binding Nombre}"
+                                       FontAttributes="Bold"
+                                       FontSize="14"
+                                       TextColor="#0F172A"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"/>
+
+                                <Label Text="{Binding Descripcion}"
+                                       FontSize="11"
+                                       TextColor="#64748B"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"/>
+
+                                <Label Text="{Binding PrecioUnitario, StringFormat='${0:F2}'}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="ForestGreen"/>
+
+                                <Grid Margin="0,4,0,0" ColumnDefinitions="36,*,36" ColumnSpacing="4">
+                                    <Button Grid.Column="0"
+                                            Text="-"
+                                            FontAttributes="Bold"
+                                            FontSize="18"
+                                            Padding="0"
+                                            HeightRequest="34"
+                                            CornerRadius="10"
+                                            BackgroundColor="CornflowerBlue"
+                                            TextColor="White"
+                                            Command="{Binding Source={x:Reference PaginaCatalogo}, Path=BindingContext.QuitarProductoCommand}"
+                                            CommandParameter="{Binding}"/>
+
+                                    <Grid Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center">
+                                        <Image Source="cart.png"
+                                               HeightRequest="24"
+                                               WidthRequest="24"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding MostrarCarrito}"
+                                               InputTransparent="True"/>
+                                        <Label Text="{Binding Cantidad}"
+                                               FontAttributes="Bold"
+                                               FontSize="18"
+                                               TextColor="#0F172A"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding MostrarCantidad}"
+                                               InputTransparent="True"/>
+                                    </Grid>
+
+                                    <Button Grid.Column="2"
+                                            Text="+"
+                                            FontAttributes="Bold"
+                                            FontSize="18"
+                                            Padding="0"
+                                            HeightRequest="34"
+                                            CornerRadius="10"
+                                            BackgroundColor="CornflowerBlue"
+                                            TextColor="White"
+                                            Command="{Binding Source={x:Reference PaginaCatalogo}, Path=BindingContext.AgregarProductoCommand}"
+                                            CommandParameter="{Binding}"/>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MenuDirect.MVVM.Views.AdminProductosView"
+             xmlns:model="clr-namespace:MenuDirect.MVVM.Models"
+             xmlns:vm="clr-namespace:MenuDirect.MVVM.ViewModel"
+             x:DataType="vm:AdminProductosViewModel"
+             x:Name="PaginaProductos"
+             BackgroundColor="#F2F4F7"
+             Title="Productos">
+
+    <Grid RowDefinitions="Auto,Auto,*" Padding="12" RowSpacing="8">
+        <!-- Encabezado -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*" ColumnSpacing="10">
+            <Button Text="&#xF177;"
+                    FontFamily="Icons"
+                    FontSize="20"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    CornerRadius="20"
+                    BackgroundColor="CornflowerBlue"
+                    TextColor="White"
+                    Command="{Binding VolverCommand}"/>
+
+            <Label Grid.Column="1"
+                   Text="Gestión de Productos"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#0F172A"
+                   VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- Formulario nuevo producto -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                Stroke="#E2E8F0"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 14"
+                Padding="12">
+            <VerticalStackLayout Spacing="6">
+                <Entry Placeholder="Nombre del producto" Text="{Binding Nombre}"/>
+                <Entry Placeholder="Descripción" Text="{Binding Descripcion}"/>
+                <Entry Placeholder="Precio" Text="{Binding PrecioTexto}" Keyboard="Numeric"/>
+                <Picker Title="Categoría"
+                        ItemsSource="{Binding Categorias}"
+                        ItemDisplayBinding="{Binding Nombre}"
+                        SelectedItem="{Binding CategoriaSeleccionada}"/>
+                <Picker Title="Subcategoría (opcional)"
+                        ItemsSource="{Binding SubcategoriasFiltradas}"
+                        ItemDisplayBinding="{Binding Nombre}"
+                        SelectedItem="{Binding SubcategoriaSeleccionada}"/>
+                <Button Text="Crear Producto"
+                        Command="{Binding CrearProductoCommand}"
+                        BackgroundColor="ForestGreen"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="10"
+                        HeightRequest="40"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Catálogo actual -->
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Productos}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Producto">
+                    <Border Margin="0,4"
+                            BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="10">
+                        <VerticalStackLayout Spacing="4">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Nombre}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A"/>
+                                <Label Grid.Column="1"
+                                       Text="{Binding PrecioUnitario, StringFormat='${0:F2}'}"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="ForestGreen"/>
+                            </Grid>
+
+                            <Label Text="{Binding Descripcion}"
+                                   FontSize="12"
+                                   TextColor="#64748B"/>
+
+                            <Grid Margin="0,4,0,0" ColumnDefinitions="*,*,*" ColumnSpacing="6">
+                                <Button Grid.Column="0"
+                                        Text="Precio"
+                                        BackgroundColor="CornflowerBlue"
+                                        TextColor="White"
+                                        CornerRadius="8"
+                                        HeightRequest="34"
+                                        FontSize="12"
+                                        Command="{Binding Source={x:Reference PaginaProductos}, Path=BindingContext.ModificarPrecioAsyncCommand}"
+                                        CommandParameter="{Binding}"/>
+
+                                <Button Grid.Column="1"
+                                        Text="Categoría"
+                                        BackgroundColor="#475569"
+                                        TextColor="White"
+                                        CornerRadius="8"
+                                        HeightRequest="34"
+                                        FontSize="12"
+                                        Command="{Binding Source={x:Reference PaginaProductos}, Path=BindingContext.ModificarCategoriaAsyncCommand}"
+                                        CommandParameter="{Binding}"/>
+
+                                <Button Grid.Column="2"
+                                        Text="Eliminar"
+                                        BackgroundColor="Crimson"
+                                        TextColor="White"
+                                        CornerRadius="8"
+                                        HeightRequest="34"
+                                        FontSize="12"
+                                        Command="{Binding Source={x:Reference PaginaProductos}, Path=BindingContext.EliminarProductoAsyncCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

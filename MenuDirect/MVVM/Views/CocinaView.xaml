@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MenuDirect.MVVM.Views.CocinaView"
+             xmlns:vm="clr-namespace:MenuDirect.MVVM.ViewModel"
+             x:DataType="vm:CocinaViewModel"
+             x:Name="PaginaCocina"
+             BackgroundColor="#F2F4F7"
+             Title="Cocina">
+
+    <Grid RowDefinitions="Auto,*" Padding="10" RowSpacing="8">
+        <!-- Encabezado -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+            <Label Text="Comandas en Cocina"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#0F172A"
+                   VerticalOptions="Center"/>
+
+            <Button Grid.Column="1"
+                    Text="Actualizar"
+                    Command="{Binding CargarComandasCommand}"
+                    BackgroundColor="CornflowerBlue"
+                    TextColor="White"
+                    CornerRadius="10"
+                    Padding="10,6"
+                    FontSize="12"/>
+
+            <Button Grid.Column="2"
+                    Text="Salir"
+                    Command="{Binding CerrarSesionCommand}"
+                    BackgroundColor="#E2E8F0"
+                    TextColor="#0F172A"
+                    CornerRadius="10"
+                    Padding="10,6"
+                    FontSize="12"/>
+        </Grid>
+
+        <!-- Lista de comandas -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Comandas}"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ComandaCocinaItem">
+                    <Border Margin="0,5"
+                            BackgroundColor="White"
+                            Stroke="#CBD5E1"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="14">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding NumeroMesa, StringFormat='Mesa #{0}'}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="#0F172A"/>
+
+                                <Border Grid.Column="1"
+                                        BackgroundColor="{Binding ColorEstado}"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 10"
+                                        Padding="10,4">
+                                    <Label Text="{Binding Estado}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="White"/>
+                                </Border>
+                            </Grid>
+
+                            <Label Text="{Binding IdPedido, StringFormat='Folio #{0}'}"
+                                   FontSize="13"
+                                   TextColor="#64748B"/>
+
+                            <Border BackgroundColor="#FEF3C7"
+                                    Stroke="#F59E0B"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 8"
+                                    Padding="10,6"
+                                    IsVisible="{Binding TieneNotas}">
+                                <Label Text="{Binding Notas}"
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="#92400E"/>
+                            </Border>
+
+                            <Label Text="{Binding ResumenProductos}"
+                                   FontSize="15"
+                                   TextColor="#1E293B"
+                                   Margin="0,4"/>
+
+                            <Grid Margin="0,6,0,0" ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Grid.Column="0"
+                                        Text="Preparando"
+                                        BackgroundColor="#F59E0B"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CornerRadius="10"
+                                        HeightRequest="40"
+                                        Command="{Binding Source={x:Reference PaginaCocina}, Path=BindingContext.MarcarPreparandoCommand}"
+                                        CommandParameter="{Binding}"/>
+
+                                <Button Grid.Column="1"
+                                        Text="Marcar Listo"
+                                        BackgroundColor="ForestGreen"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CornerRadius="10"
+                                        HeightRequest="40"
+                                        Command="{Binding Source={x:Reference PaginaCocina}, Path=BindingContext.MarcarListoCommand}"
+                                        CommandParameter="{Binding}"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
