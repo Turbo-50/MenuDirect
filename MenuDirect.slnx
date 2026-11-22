@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Database/">
+    <File Path="schema.sql" />
+    <File Path="seed.sql" />
+  </Folder>
+  <Project Path="MenuDirect/MenuDirect.csproj" />
+</Solution>
